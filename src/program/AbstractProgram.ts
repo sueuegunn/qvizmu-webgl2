@@ -89,9 +89,11 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
 
   private unbindFramebuffer(gl: WebGL2RenderingContext): void {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    // TODO: device pixel ratio
     const {x, y} = this.clientSize;
-    gl.viewport(0, 0, x, y);
+    const {devicePixelRatio} = window;
+    const width = x * devicePixelRatio;
+    const height = y * devicePixelRatio;
+    gl.viewport(0, 0, width, height);
   }
 
   private glDefaultSettings(gl: WebGL2RenderingContext): void {
