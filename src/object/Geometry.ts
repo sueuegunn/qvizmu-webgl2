@@ -1,6 +1,6 @@
 import { Vector2, Vector3, type Dimension, type Vector1, type Vector4 } from "mathue";
 import { GLGeometry } from "../gl/GLGeometry";
-import { sumMap } from "mathue/src/function";
+import { range, sumMap } from "mathue/src/function";
 import { AbstractGLDisposable } from "../gl/GLDisposable";
 
 type Attribute<Name extends string, Dim extends Dimension, Norm extends boolean = false> = {
@@ -40,6 +40,67 @@ type ShaderTypeOf<Dim extends Dimension> =
 type ShaderAttributeInputs<Attrs extends AttributeType[]> =
   Attrs extends [infer First extends AttributeType, ...infer Rest extends AttributeType[]] ?
   Rest['length'] extends 0 ? First : `\nin ${ShaderTypeOf<First['size']>} ${First['name']}` : '';
+
+// TupleOf<Ele, 2> -> [Ele, Ele] 
+type TupleOf<Ele, Len extends number, Tup extends Ele[] = []> =
+  Tup['length'] extends Len ? Tup : TupleOf<Ele, Len, [...Tup, Ele]>;
+
+const calculateVertexSize = <Attrs extends AttributeType[]>(vertex: VertexOf<Attrs>): number => {
+  return sumMap(Object.values(vertex), v => (v as AttributeValue).dimension); // as...
+};
+
+type GeometryFace = [number, number, number];
+
+const buildGeometryByPattern = <
+  Attrs extends AttributeType[],
+  NumVert extends number,
+  NumFace extends number,
+>
+(
+  attributes: Attrs,
+  patternCount: number,
+  verticesPerPattern: NumVert,
+  facesPerPattern: NumFace,
+  buildVertexTuplePerPattern: (patternIndex: number) => TupleOf<VertexOf<Attrs>, NumVert>,
+  buildFacesPerPattern: (patternIndex: number) => TupleOf<GeometryFace, NumFace>,
+): Geometry<Attrs> | null => {
+  if (verticesPerPattern <= 0 || facesPerPattern <= 0) {
+    return null;
+  }
+
+  const firstVertexTuple = buildVertexTuplePerPattern(0) as Array<VertexOf<Attrs>>; // as...
+  const vertexSize = calculateVertexSize(firstVertexTuple[0]);
+  const vertices = new Float32Array(patternCount * verticesPerPattern * vertexSize);
+  for (const patternIndex of range(patternCount)) {
+    const vertexTuple = patternIndex === 0
+      ? firstVertexTuple
+      : buildVertexTuplePerPattern(patternIndex) as Array<VertexOf<Attrs>>; // as...
+    const baseIndex = patternIndex * verticesPerPattern * vertexSize;
+    vertexTuple.forEach((vertex, vertexIndex) => {
+      let index = baseIndex + vertexIndex * vertexSize;
+      for (const value of Object.values(vertex)) {
+        for (const element of (value as AttributeValue).elements) {
+          vertices[index] = element;
+          index++;
+        }
+      }
+    });
+  }
+
+  const indices = new Uint16Array(patternCount * facesPerPattern * 3);
+  for (const patternIndex of range(patternCount)) {
+    const faces = buildFacesPerPattern(patternIndex) as GeometryFace[];
+    const baseIndex = patternIndex * facesPerPattern * 3;
+    faces.forEach((face, faceIndex) => {
+      let index = baseIndex + faceIndex * 3;
+      for (const i of range(3)) {
+        indices[index + i] = face[i];
+      }
+    });
+  }
+
+  return new Geometry(vertices, indices, attributes);
+};
 
 class Geometry<Attrs extends AttributeType[]> extends AbstractGLDisposable {
   readonly vertices: Float32Array;
@@ -84,16 +145,12 @@ class Geometry<Attrs extends AttributeType[]> extends AbstractGLDisposable {
     vertices[index] = value;
   }
 
-  private calculateVertexSize(vertex: VertexOf<Attrs>): number {
-    return sumMap(Object.values(vertex), v => (v as AttributeValue).dimension); // as...
-  }
-
   private getVertexSize(vertex: VertexOf<Attrs>): number {
     if (this._vertexSize !== undefined) {
       return this._vertexSize;
     }
 
-    this._vertexSize = this.calculateVertexSize(vertex);
+    this._vertexSize = calculateVertexSize(vertex);
     return this._vertexSize;
   }
 
@@ -152,5 +209,5 @@ class Geometry<Attrs extends AttributeType[]> extends AbstractGLDisposable {
   }
 }
 
-export {Geometry};
-export type {Attribute, AttributeType, ShaderAttributeInputs};
+export {Geometry, buildGeometryByPattern};
+export type {Attribute, AttributeType, VertexOf, ShaderAttributeInputs, GeometryFace, TupleOf};

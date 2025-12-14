@@ -3,11 +3,12 @@ import { PerspectiveCamera } from "./camera/PerspectiveCamera";
 import { AbstractMaterial } from "./material/AbstractMaterial";
 import { SingleColorUnlitMaterial } from "./material/SingleColorUnlitMaterial";
 import { Geometry } from "./object/Geometry";
-import type { Attribute, AttributeType } from "./object/Geometry";
+import type { Attribute, AttributeType, GeometryFace, TupleOf, VertexOf } from "./object/Geometry";
+import { buildGeometryByPattern } from "./object/Geometry";
 import { Object3D } from "./object/Object3D";
 import { Transform } from "./object/Transform";
 import { AbstractProgram } from "./program/AbstractProgram";
-import { SingleColorUnlitProgram, type SingleColorUnlitAttributes } from "./program/singleColorUnlit/SingleColorUnlitProgram";
+import { SingleColorUnlitProgram, type SingleColorUnlitAttributes, type SingleColorUnlitVertex } from "./program/singleColorUnlit/SingleColorUnlitProgram";
 import { Color } from "./value/Color";
 import { Size2 } from "./value/Size2";
 import { GLCameraEmpty } from "./gl/camera/GLCameraEmpty";
@@ -27,10 +28,15 @@ export {
   PerspectiveCamera,
   Color,
   Size2,
+  buildGeometryByPattern,
 };
 
 export type {
   Attribute,
   AttributeType,
+  VertexOf,
   SingleColorUnlitAttributes,
+  SingleColorUnlitVertex,
+  GeometryFace,
+  TupleOf,
 };

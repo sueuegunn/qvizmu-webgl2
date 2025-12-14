@@ -6,13 +6,15 @@ import { AbstractProgram } from "../AbstractProgram";
 import type { GLCamera } from "../../gl/camera/GLCamera";
 import { GLCameraSeparate } from "../../gl/camera/GLCameraSeparate";
 import type { Object3D } from "../../object/Object3D";
-import type { Attribute } from '../../object/Geometry';
+import type { Attribute, VertexOf } from '../../object/Geometry';
 
 const NAME = 'SingleColorUnlitProgram';
 
 type SingleColorUnlitAttributes = [
   Attribute<'position', 3>,
 ];
+
+type SingleColorUnlitVertex = VertexOf<SingleColorUnlitAttributes>;
 
 class SingleColorUnlitProgram extends AbstractProgram<SingleColorUnlitMaterial, SingleColorUnlitAttributes> {
   constructor(gl: WebGL2RenderingContext) {
@@ -42,4 +44,4 @@ class SingleColorUnlitProgram extends AbstractProgram<SingleColorUnlitMaterial, 
 }
 
 export {SingleColorUnlitProgram};
-export type {SingleColorUnlitAttributes};
+export type {SingleColorUnlitAttributes, SingleColorUnlitVertex};
