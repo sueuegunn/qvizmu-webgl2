@@ -1,3 +1,6 @@
+import type { Identifiable } from "../identity/Identifiable";
+import { IdGenerator } from "../identity/IdGenerator";
+
 const compileShader = (
   gl: WebGL2RenderingContext,
   source: string,
@@ -50,19 +53,28 @@ const linkProgram = (
   return program;
 };
 
-class GLProgram {
+class GLProgram implements Identifiable {
   readonly program: WebGLProgram;
   private vertex: WebGLShader;
   private fragment: WebGLShader;
 
+  // Identifiable
+  readonly id: number;
+  readonly tag: string;
+
   private constructor(
     program: WebGLProgram,
     vertex: WebGLShader,
-    fragment: WebGLShader
+    fragment: WebGLShader,
+    id: number,
+    tag: string
   ) {
     this.program = program;
     this.vertex = vertex;
     this.fragment = fragment;
+
+    this.id = id;
+    this.tag = tag;
   }
 
   static create(
@@ -86,7 +98,10 @@ class GLProgram {
       return null;
     }
 
-    return new GLProgram(program, vertex, fragment);
+    const id = IdGenerator.next();
+    const tag = `${name}.GLProgram:${id}`;
+
+    return new GLProgram(program, vertex, fragment, id, tag);
   }
 
   destroy(gl: WebGL2RenderingContext): void {

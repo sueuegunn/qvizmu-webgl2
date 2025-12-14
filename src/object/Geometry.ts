@@ -1,6 +1,7 @@
 import { Vector2, Vector3, type Dimension, type Vector1, type Vector4 } from "mathue";
 import { GLGeometry } from "../gl/GLGeometry";
 import { sumMap } from "mathue/src/function";
+import { AbstractGLDisposable } from "../gl/GLDisposable";
 
 type Attribute<Name extends string, Dim extends Dimension, Norm extends boolean = false> = {
   name: Name;
@@ -16,27 +17,31 @@ type AttributeType = {
 
 type AttributeValue = Vector1 | Vector2 | Vector3 | Vector4;
 
+// 1 -> Vector1, 2 -> Vector2, ...
 type AttributeValueOf<Dim extends Dimension> =
   Dim extends 1 ? Vector1 :
   Dim extends 2 ? Vector2 :
   Dim extends 3 ? Vector3 :
   Dim extends 4 ? Vector4 : never;
 
+// -> {position: Vector3, ...}
 type VertexOf<Attrs extends AttributeType[]> = {
   [Attr in Attrs[number] as Attr['name']]: AttributeValueOf<Attr['size']>;
 };
 
-// type ShaderTypeOf<Dim extends Dimension> =
-//   Dim extends 1 ? 'float' :
-//   Dim extends 2 ? 'vec2' :
-//   Dim extends 3 ? 'vec3' :
-//   Dim extends 4 ? 'vec4' : never;
+// 1 -> float, 2 -> vec2, ...
+type ShaderTypeOf<Dim extends Dimension> =
+  Dim extends 1 ? 'float' :
+  Dim extends 2 ? 'vec2' :
+  Dim extends 3 ? 'vec3' :
+  Dim extends 4 ? 'vec4' : never;
 
-// type ShaderAttributeInputs<Attrs extends AttributeType[]> =
-//   Attrs extends [infer First extends AttributeType, ...infer Rest extends AttributeType[]] ?
-//   Rest['length'] extends 0 ? First : `\nin ${ShaderTypeOf<First['size']>} ${First['name']}` : '';
+// -> "\n in vec3 position; ..."
+type ShaderAttributeInputs<Attrs extends AttributeType[]> =
+  Attrs extends [infer First extends AttributeType, ...infer Rest extends AttributeType[]] ?
+  Rest['length'] extends 0 ? First : `\nin ${ShaderTypeOf<First['size']>} ${First['name']}` : '';
 
-class Geometry<Attrs extends AttributeType[]> {
+class Geometry<Attrs extends AttributeType[]> extends AbstractGLDisposable {
   readonly vertices: Float32Array;
   readonly indices: Uint16Array;
   readonly attributes: Attrs;
@@ -50,6 +55,7 @@ class Geometry<Attrs extends AttributeType[]> {
     indices: Uint16Array,
     attributes: Attrs
   ) {
+    super();
     this.vertices = vertices;
     this.indices = indices;
     this.attributes = attributes;
@@ -134,7 +140,17 @@ class Geometry<Attrs extends AttributeType[]> {
 
     glGeometry.bind(gl);
   }
+
+  onDispose(gl: WebGL2RenderingContext): void {
+    if (!this.glGeometry) {
+      return;
+    }
+
+    const {glGeometry} = this;
+    glGeometry.dispose(gl);
+    this.glGeometry = undefined;
+  }
 }
 
 export {Geometry};
-export type {Attribute, AttributeType};
+export type {Attribute, AttributeType, ShaderAttributeInputs};

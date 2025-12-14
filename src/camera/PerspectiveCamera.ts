@@ -1,6 +1,11 @@
 import { Matrix4, Vector2 } from "mathue";
 import type { Camera } from "./Camera";
 import type { CameraStance } from "./stance/CameraStance";
+import { IdGenerator } from "../identity/IdGenerator";
+
+type PerspectiveCameraOptions = {
+  tag?: string;
+};
 
 class PerspectiveCamera implements Camera {
   readonly clientSize: Vector2;
@@ -13,12 +18,17 @@ class PerspectiveCamera implements Camera {
   private _near: number;
   private _far: number;
 
+  // Identifiable
+  readonly id: number;
+  readonly tag: string;
+
   constructor(
     clientSize: Vector2,
     stance: CameraStance,
     verticalFov: number,
     near: number,
-    far: number
+    far: number,
+    options?: PerspectiveCameraOptions
   ) {
     this.clientSize = clientSize;
     this.view = Matrix4.identity();
@@ -27,6 +37,9 @@ class PerspectiveCamera implements Camera {
     this._verticalFov = verticalFov;
     this._near = near;
     this._far = far;
+
+    this.id = IdGenerator.next();
+    this.tag = options?.tag ?? `PerspectiveCamera:${this.id}`;
   }
 
   updateMatrix(): void {

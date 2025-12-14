@@ -78,12 +78,12 @@ class Framebuffer {
     return true;
   }
 
-  destroy(gl: WebGL2RenderingContext): void {
+  dispose(gl: WebGL2RenderingContext): void {
     const {glFramebuffer} = this;
     if (!glFramebuffer) {
       return;
     }
-    glFramebuffer.destroy(gl);
+    glFramebuffer.dispose(gl);
     this._glFramebuffer = undefined;
   }
 }

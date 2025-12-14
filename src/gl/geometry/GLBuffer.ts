@@ -1,5 +1,7 @@
 import { sumMap } from "mathue/src/function";
 import type { GLAttribute } from "./GLAttribute";
+import { AbstractGLDisposable } from "../GLDisposable";
+import { GLResourceManager } from "../resource/GLResourceManager";
 
 const calculateStrideBytes = (stride: number, glAttributes: GLAttribute[]): number => {
   if (glAttributes.length === 1) {
@@ -8,7 +10,7 @@ const calculateStrideBytes = (stride: number, glAttributes: GLAttribute[]): numb
   return stride * Float32Array.BYTES_PER_ELEMENT;
 };
 
-class GLBuffer {
+class GLBuffer extends AbstractGLDisposable {
   readonly buffer: WebGLBuffer;
   readonly vertices: Float32Array;
   readonly stride: number;
@@ -22,6 +24,8 @@ class GLBuffer {
     stride: number,
     glAttributes: GLAttribute[]
   ) {
+    super();
+
     this.buffer = buffer;
     this.vertices = vertices;
     this.stride = stride;
@@ -51,7 +55,11 @@ class GLBuffer {
     }
 
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    return new GLBuffer(buffer, vertices, stride, glAttributes);
+
+    const glBuffer = new GLBuffer(buffer, vertices, stride, glAttributes);
+    GLResourceManager.add(gl, glBuffer);
+
+    return glBuffer;
   }
 
   setValue(value: number, index: number): void {
@@ -85,6 +93,12 @@ class GLBuffer {
       gl.enableVertexAttribArray(location);
       gl.vertexAttribPointer(location, size, gl.FLOAT, normalized, strideBytes, offsetBytes);
     }
+  }
+
+  onDispose(gl: WebGL2RenderingContext): void {
+    const {buffer} = this;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.deleteBuffer(buffer);
   }
 }
 

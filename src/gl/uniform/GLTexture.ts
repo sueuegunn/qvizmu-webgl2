@@ -1,3 +1,5 @@
+import { AbstractGLDisposable } from "../GLDisposable";
+import { GLResourceManager } from "../resource/GLResourceManager";
 import type { GLUniform } from "./GLUniform";
 import { GLUniformInt1 } from "./GLUniformInt1";
 
@@ -144,7 +146,7 @@ const numberToTarget = (targetNumber: number): TextureTarget => {
   }
 }
 
-class GLTexture implements GLUniform {
+class GLTexture extends AbstractGLDisposable implements GLUniform {
   readonly texture: WebGLTexture;
   readonly target: TextureTarget;
   readonly source: TexImageSource;
@@ -158,6 +160,7 @@ class GLTexture implements GLUniform {
     textureParameterMap: Map<number, number>,
     glUniform: GLUniformInt1
   ) {
+    super();
     this.texture = texture;
     this.target = target;
     this.source = source;
@@ -199,7 +202,10 @@ class GLTexture implements GLUniform {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
     }
 
-    return new GLTexture(texture, target, source, textureParameterMap, glUniform);
+    const glTexture = new GLTexture(texture, target, source, textureParameterMap, glUniform);
+    GLResourceManager.add(gl, glTexture);
+
+    return glTexture;
   }
 
   uniform(gl: WebGL2RenderingContext): void {
@@ -207,6 +213,10 @@ class GLTexture implements GLUniform {
     glUniform.uniform(gl);
     gl.activeTexture(target);
     gl.bindTexture(gl.TEXTURE_2D, texture);
+  }
+
+  onDispose(gl: WebGL2RenderingContext): void {
+    gl.deleteTexture(this.texture);
   }
 }
 

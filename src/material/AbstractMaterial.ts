@@ -1,18 +1,21 @@
+import { AbstractGLDisposable, type GLDisposable } from "../gl/GLDisposable";
+import { GLResourceManager } from "../gl/resource/GLResourceManager";
 import type { GLUniform } from "../gl/uniform/GLUniform";
 
 type UniformMap = {[name: string]: GLUniform};
 
-interface Material {
+interface Material extends GLDisposable {
   isPrepared(): boolean;
   prepare(gl: WebGL2RenderingContext, program: WebGLProgram): void;
   bind(gl: WebGL2RenderingContext): void;
 }
 
-abstract class AbstractMaterial<T extends UniformMap> implements Material {
+abstract class AbstractMaterial<T extends UniformMap> extends AbstractGLDisposable implements Material {
   private uniformMap?: T;
   readonly name: string;
 
   constructor(name: string) {
+    super();
     this.name = name;
   }
 
@@ -39,6 +42,8 @@ abstract class AbstractMaterial<T extends UniformMap> implements Material {
       return;
     }
 
+    GLResourceManager.add(gl, this);
+
     this.uniformMap = uniformMap;
   }
 
@@ -51,6 +56,17 @@ abstract class AbstractMaterial<T extends UniformMap> implements Material {
     for (const uniform of Object.values(this.uniformMap)) {
       uniform.uniform(gl);
     }
+  }
+
+  onDispose(gl: WebGL2RenderingContext): void {
+    if (!this.uniformMap) {
+      return;
+    }
+
+    for (const uniform of Object.values(this.uniformMap)) {
+      uniform.dispose(gl);
+    }
+    this.uniformMap = undefined;
   }
 }
 

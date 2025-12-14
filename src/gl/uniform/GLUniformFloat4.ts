@@ -1,14 +1,24 @@
-import type { Vector4 } from "mathue";
+import { Vector4 } from "mathue";
 import type { GLUniform } from "./GLUniform";
 import { GLUniformLocation } from "./GLUniformLocation";
 import type { Color } from "../../value/Color";
+import type { GLDisposable } from "../GLDisposable";
+import { GLResourceManager } from "../resource/GLResourceManager";
 
-class GLUniformFloat4 implements GLUniform {
+class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
+
+  // GLDisposable
+  private _isDisposed: boolean = false;
+  
+  get isDisposed(): boolean {
+    return this._isDisposed;
+  }
+  
+  private set isDisposed(value: boolean) {
+    this._isDisposed = value;
+  }
+
   readonly glUniform: GLUniformLocation;
-  private _x: number;
-  private _y: number;
-  private _z: number;
-  private _w: number;
 
   private constructor(
     glUniform: GLUniformLocation,
@@ -17,11 +27,8 @@ class GLUniformFloat4 implements GLUniform {
     z: number,
     w: number
   ) {
+    super(x, y, z, w);
     this.glUniform = glUniform;
-    this._x = x;
-    this._y = y;
-    this._z = z;
-    this._w = w;
   }
 
   static create(
@@ -39,7 +46,10 @@ class GLUniformFloat4 implements GLUniform {
       return null;
     }
 
-    return new GLUniformFloat4(glUniform, x, y, z, w);
+    const glUniformFloat4 = new GLUniformFloat4(glUniform, x, y, z, w);
+    GLResourceManager.add(gl, glUniformFloat4);
+
+    return glUniformFloat4;
   }
 
   static createFromVector(
@@ -62,58 +72,31 @@ class GLUniformFloat4 implements GLUniform {
     return GLUniformFloat4.create(gl, program, name, r, g, b, a);
   }
 
-  get x(): number {
-    return this._x;
-  }
-
-  set x(value: number) {
-    this._x = value;
-  }
-
-  get y(): number {
-    return this._y;
-  }
-
-  set y(value: number) {
-    this._y = value;
-  }
-
-  get z(): number {
-    return this._z;
-  }
-
-  set z(value: number) {
-    this._z = value;
-  }
-
-  get w(): number {
-    return this._w;
-  }
-
-  set w(value: number) {
-    this._w = value;
-  }
-
   setVector(vector: Vector4): void {
     const {x, y, z, w} = vector;
-    this._x = x;
-    this._y = y;
-    this._z = z;
-    this._w = w;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.w = w;
   }
 
   setColor(color: Color): void {
     const {r, g, b, a} = color;
-    this._x = r;
-    this._y = g;
-    this._z = b;
-    this._w = a;
+    this.x = r;
+    this.y = g;
+    this.z = b;
+    this.w = a;
   }
 
   uniform(gl: WebGL2RenderingContext): void {
     const {glUniform, x, y, z, w} = this;
     const {location} = glUniform;
     gl.uniform4f(location, x, y, z, w);
+  }
+
+  dispose(_gl: WebGL2RenderingContext): void {
+    // WebGLUniformLocation objects do not require explicit disposal
+    this.isDisposed = true;
   }
 }
 

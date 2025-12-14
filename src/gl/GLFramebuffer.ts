@@ -1,4 +1,7 @@
-class GLFramebuffer {
+import { AbstractGLDisposable } from "./GLDisposable";
+import { GLResourceManager } from "./resource/GLResourceManager";
+
+class GLFramebuffer extends AbstractGLDisposable {
   readonly width: number;
   readonly height: number;
   readonly framebuffer: WebGLFramebuffer;
@@ -14,6 +17,7 @@ class GLFramebuffer {
     canvas: HTMLCanvasElement,
     texture: WebGLTexture
   ) {
+    super();
     this.width = width;
     this.height = height;
     this.framebuffer = framebuffer;
@@ -64,10 +68,13 @@ class GLFramebuffer {
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    return new GLFramebuffer(width, height, framebuffer, depthRenderbuffer, canvas, texture);
+    const glFramebuffer = new GLFramebuffer(width, height, framebuffer, depthRenderbuffer, canvas, texture);
+    GLResourceManager.add(gl, glFramebuffer);
+
+    return glFramebuffer;
   }
 
-  destroy(gl: WebGL2RenderingContext): void {
+  onDispose(gl: WebGL2RenderingContext): void {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 

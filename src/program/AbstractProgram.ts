@@ -5,10 +5,15 @@ import type { Material } from "../material/AbstractMaterial";
 import type { Object3D } from "../object/Object3D";
 import type { Framebuffer } from "./Framebuffer";
 import type { AttributeType } from "../object/Geometry";
+import { AbstractGLDisposable, type GLDisposable } from "../gl/GLDisposable";
+import { GLResourceManager } from "../gl/resource/GLResourceManager";
+import type { Identifiable } from "../identity/Identifiable";
+import { IdGenerator } from "../identity/IdGenerator";
 
-interface Program {
+interface Program extends GLDisposable {
+  updateClientSize(clientSize: Vector2): void;
+  updateCamera(view: Matrix4, projection: Matrix4): void;
   drawObjects(objects: Iterable<Object3D<Material, AttributeType[]>>, framebuffer?: Framebuffer): void;
-  destroy(): void;
 }
 
 type GLBundle = {
@@ -17,13 +22,20 @@ type GLBundle = {
   glCamera: GLCamera;
 };
 
-abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType[]> implements Program {
+abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType[]>
+  extends AbstractGLDisposable
+  implements Program, Identifiable
+{
   abstract createCamera(gl: WebGL2RenderingContext, program: WebGLProgram): GLCamera | null;
   abstract glSettings(gl: WebGL2RenderingContext): void;
   abstract glDraw(gl: WebGL2RenderingContext, object3D: Object3D<Mat, Attrs>): void;
 
-  readonly glBundle?: GLBundle;
+  private glBundle?: GLBundle;
   readonly clientSize: Vector2;
+
+  // Identifiable
+  readonly id: number;
+  readonly tag: string;
 
   constructor(
     gl: WebGL2RenderingContext,
@@ -31,7 +43,11 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     fragmentShaderSource: string,
     name: string
   ) {
+    super();
     this.clientSize = Vector2.allOnes();
+
+    this.id = IdGenerator.next();
+    this.tag = `${name}.AbstractProgram:${this.id}`;
     
     const glProgram = GLProgram.create(gl, vertexShaderSource, fragmentShaderSource, name);
     if (!glProgram) {
@@ -46,11 +62,16 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
       return;
     }
 
+    GLResourceManager.add(gl, this);
+
     this.glBundle = {gl, glProgram, glCamera};
   }
 
+  updateClientSize(clientSize: Vector2): void {
+    this.clientSize.set(clientSize);
+  }
+
   updateCamera(
-    clientSize: Vector2,
     view: Matrix4,
     projection: Matrix4
   ): void {
@@ -58,8 +79,6 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     if (!glBundle) {
       return;
     }
-
-    this.clientSize.set(clientSize);
 
     const {gl, glProgram, glCamera} = glBundle;
     const {program} = glProgram;
@@ -70,8 +89,8 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
 
   private unbindFramebuffer(gl: WebGL2RenderingContext): void {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    const {x, y} = this.clientSize;
     // TODO: device pixel ratio
+    const {x, y} = this.clientSize;
     gl.viewport(0, 0, x, y);
   }
 
@@ -106,6 +125,9 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     this.glSettings(gl);
 
     for (const object3D of objects) {
+      if (object3D.isDisposed) {
+        continue;
+      }
       const binded = object3D.bind(gl, program);
       if (!binded) {
         continue;
@@ -118,16 +140,20 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     }
   }
 
-  destroy(): void {
+  onDispose(gl: WebGL2RenderingContext): void {
     const {glBundle} = this;
     if (!glBundle) {
       return;
     }
 
-    const {gl, glProgram} = glBundle;
+    if (gl !== glBundle.gl) {
+      return;
+    }
+
+    const {glProgram} = glBundle;
     glProgram.destroy(gl);
 
-    // TODO: free glBundle=undefined
+    this.glBundle = undefined;
   }
 }
 
