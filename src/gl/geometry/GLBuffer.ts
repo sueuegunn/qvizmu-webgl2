@@ -1,7 +1,7 @@
-import { sumMap } from "mathue/src/function";
 import type { GLAttribute } from "./GLAttribute";
 import { AbstractGLDisposable } from "../GLDisposable";
 import { GLResourceManager } from "../resource/GLResourceManager";
+import { sumMap } from "mathue";
 
 const calculateStrideBytes = (stride: number, glAttributes: GLAttribute[]): number => {
   if (glAttributes.length === 1) {

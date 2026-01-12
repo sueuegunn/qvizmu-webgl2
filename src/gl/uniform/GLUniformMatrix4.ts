@@ -23,8 +23,9 @@ class GLUniformMatrix4 extends Matrix4 implements GLUniform, GLDisposable {
     glUniformLocation: GLUniformLocation,
     matrix: Matrix4
   ) {
-    super();
-    this.set(matrix);
+    const [e00, e01, e02, e03, e10, e11, e12, e13, e20, e21, e22, e23, e30, e31, e32, e33] = matrix.elements;
+    super(e00, e01, e02, e03, e10, e11, e12, e13, e20, e21, e22, e23, e30, e31, e32, e33);
+    this.copy(matrix);
     this.glUniformLocation = glUniformLocation;
   }
 
@@ -47,7 +48,7 @@ class GLUniformMatrix4 extends Matrix4 implements GLUniform, GLDisposable {
 
   uniform(gl: WebGL2RenderingContext): void {
     const {location} = this.glUniformLocation;
-    gl.uniformMatrix4fv(location, false, this);
+    gl.uniformMatrix4fv(location, false, this.elements);
   }
 
   dispose(_gl: WebGL2RenderingContext): void {

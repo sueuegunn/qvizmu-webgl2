@@ -1,4 +1,4 @@
-import { CameraStance } from "./camera/stance/CameraStance";
+import { CameraStance, type CameraStanceInput, type CameraStanceInputRight, type CameraStanceInputUp } from "./camera/stance/CameraStance";
 import { PerspectiveCamera } from "./camera/PerspectiveCamera";
 import { AbstractMaterial } from "./material/AbstractMaterial";
 import { SingleColorUnlitMaterial } from "./material/SingleColorUnlitMaterial";
@@ -8,11 +8,14 @@ import { buildGeometryByPattern } from "./object/Geometry";
 import { Object3D } from "./object/Object3D";
 import { Transform } from "./object/Transform";
 import { AbstractProgram } from "./program/AbstractProgram";
-import { SingleColorUnlitProgram, type SingleColorUnlitAttributes, type SingleColorUnlitVertex } from "./program/singleColorUnlit/SingleColorUnlitProgram";
+import { SingleColorUnlitProgram } from "./program/singleColorUnlit/SingleColorUnlitProgram";
+import type { SingleColorUnlitAttributes, SingleColorUnlitVertex } from "./program/singleColorUnlit/SingleColorUnlitProgram";
 import { Color } from "./value/Color";
 import { Size2 } from "./value/Size2";
 import { GLCameraEmpty } from "./gl/camera/GLCameraEmpty";
 import { GLCameraSeparate } from "./gl/camera/GLCameraSeparate";
+import { VertexColorUnlitProgram } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
+import type { VertexColorUnlitAttributes, VertexColorUnlitVertex } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
 
 export {
   Object3D,
@@ -25,6 +28,7 @@ export {
   SingleColorUnlitMaterial,
   AbstractProgram,
   SingleColorUnlitProgram,
+  VertexColorUnlitProgram,
   PerspectiveCamera,
   Color,
   Size2,
@@ -34,9 +38,14 @@ export {
 export type {
   Attribute,
   AttributeType,
+  CameraStanceInput,
+  CameraStanceInputRight,
+  CameraStanceInputUp,
   VertexOf,
   SingleColorUnlitAttributes,
   SingleColorUnlitVertex,
+  VertexColorUnlitAttributes,
+  VertexColorUnlitVertex,
   GeometryFace,
   TupleOf,
 };

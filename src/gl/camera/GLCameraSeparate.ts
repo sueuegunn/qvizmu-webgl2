@@ -32,8 +32,8 @@ class GLCameraSeparate implements GLCamera {
   }
 
   update(view: Matrix4, projection: Matrix4): void {
-    this.view.set(view);
-    this.projection.set(projection);
+    this.view.copy(view);
+    this.projection.copy(projection);
   }
 
   uniform(gl: WebGL2RenderingContext): void {

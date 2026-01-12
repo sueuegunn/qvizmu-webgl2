@@ -1,9 +1,9 @@
-import { Vector2, Vector3, type Dimension, type Vector1, type Vector4 } from "mathue";
+import { Vector2, Vector3, range, sumMap } from "mathue";
+import type { VectorDimension, Vector1, Vector4 } from "mathue";
 import { GLGeometry } from "../gl/GLGeometry";
-import { range, sumMap } from "mathue/src/function";
 import { AbstractGLDisposable } from "../gl/GLDisposable";
 
-type Attribute<Name extends string, Dim extends Dimension, Norm extends boolean = false> = {
+type Attribute<Name extends string, Dim extends VectorDimension, Norm extends boolean = false> = {
   name: Name;
   size: Dim;
   normalized: Norm;
@@ -11,18 +11,17 @@ type Attribute<Name extends string, Dim extends Dimension, Norm extends boolean 
 
 type AttributeType = {
   name: string;
-  size: Dimension;
+  size: VectorDimension;
   normalized?: boolean;
 };
 
 type AttributeValue = Vector1 | Vector2 | Vector3 | Vector4;
 
 // 1 -> Vector1, 2 -> Vector2, ...
-type AttributeValueOf<Dim extends Dimension> =
+type AttributeValueOf<Dim extends VectorDimension> =
   Dim extends 1 ? Vector1 :
   Dim extends 2 ? Vector2 :
-  Dim extends 3 ? Vector3 :
-  Dim extends 4 ? Vector4 : never;
+  Dim extends 3 ? Vector3 : Vector4;
 
 // -> {position: Vector3, ...}
 type VertexOf<Attrs extends AttributeType[]> = {
@@ -30,11 +29,10 @@ type VertexOf<Attrs extends AttributeType[]> = {
 };
 
 // 1 -> float, 2 -> vec2, ...
-type ShaderTypeOf<Dim extends Dimension> =
+type ShaderTypeOf<Dim extends VectorDimension> =
   Dim extends 1 ? 'float' :
   Dim extends 2 ? 'vec2' :
-  Dim extends 3 ? 'vec3' :
-  Dim extends 4 ? 'vec4' : never;
+  Dim extends 3 ? 'vec3' : 'vec4';
 
 // -> "\n in vec3 position; ..."
 type ShaderAttributeInputs<Attrs extends AttributeType[]> =
@@ -46,7 +44,7 @@ type TupleOf<Ele, Len extends number, Tup extends Ele[] = []> =
   Tup['length'] extends Len ? Tup : TupleOf<Ele, Len, [...Tup, Ele]>;
 
 const calculateVertexSize = <Attrs extends AttributeType[]>(vertex: VertexOf<Attrs>): number => {
-  return sumMap(Object.values(vertex), v => (v as AttributeValue).dimension); // as...
+  return sumMap(Object.values(vertex as {[name: string]: AttributeValue}), (v: AttributeValue) => v.dimension); // as ...
 };
 
 type GeometryFace = [number, number, number];
@@ -211,3 +209,4 @@ class Geometry<Attrs extends AttributeType[]> extends AbstractGLDisposable {
 
 export {Geometry, buildGeometryByPattern};
 export type {Attribute, AttributeType, VertexOf, ShaderAttributeInputs, GeometryFace, TupleOf};
+

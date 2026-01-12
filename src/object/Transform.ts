@@ -1,16 +1,13 @@
-import { Matrix4, Quaternion, Vector3 } from "mathue";
-import type { Clonable } from "mathue/src/Clonable";
+import { Matrix4, Quaternion, Vector3, type Clonable } from "mathue";
 import { GLTransform } from "../gl/GLTransform";
 
 class Transform implements Clonable<Transform> {
   readonly position: Vector3;
   readonly rotation: Quaternion;
   readonly scale: Vector3;
-  readonly model: Matrix4;
 
-  private positionMatrix: Matrix4;
-  private rotationMatrix: Matrix4;
-  private scaleMatrix: Matrix4;
+  readonly model: Matrix4;
+  private tmpMatrix: Matrix4;
 
   private glTransform: GLTransform | undefined;
 
@@ -18,11 +15,9 @@ class Transform implements Clonable<Transform> {
     this.position = position;
     this.rotation = rotation;
     this.scale = scale;
-    this.model = Matrix4.identity();
 
-    this.positionMatrix = Matrix4.identity();
-    this.rotationMatrix = Matrix4.identity();
-    this.scaleMatrix = Matrix4.identity();
+    this.model = Matrix4.identity();
+    this.tmpMatrix = Matrix4.identity();
   }
 
   clone(): Transform {
@@ -31,23 +26,15 @@ class Transform implements Clonable<Transform> {
   }
 
   static identity(): Transform {
-    return new Transform(Vector3.zero(), Quaternion.identity(), Vector3.allOnes());
+    return new Transform(Vector3.zero(), Quaternion.identity(), Vector3.one());
   }
 
   update(): void {
-    this.positionMatrix.setIdentity();
-    this.positionMatrix.scale(this.scale);
-
-    this.rotationMatrix.setIdentity();
-    this.rotationMatrix.setQuaternion(this.rotation);
-
-    this.scaleMatrix.setIdentity();
-    this.scaleMatrix.scale(this.scale);
-
-    this.model.setIdentity()
-      .multiply(this.positionMatrix)
-      .multiply(this.rotationMatrix)
-      .multiply(this.scaleMatrix);
+    const {model, position, rotation, scale} = this;
+    model.setIdentity()
+      .multiplyTranslation(position)
+      .multiplyRotation(rotation)
+      .multiplyScale(scale);
   }
 
   isPrepared(): boolean {
@@ -75,7 +62,7 @@ class Transform implements Clonable<Transform> {
     }
 
     const {modelUniform} = glTransform;
-    modelUniform.set(this.model);
+    modelUniform.copy(this.model);
     modelUniform.uniform(gl);
   }
 }

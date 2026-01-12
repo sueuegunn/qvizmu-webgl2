@@ -18,11 +18,21 @@ type CameraStanceInputUp = CameraStanceInputCommon & {
 type CameraStanceInput = CameraStanceInputRight | CameraStanceInputUp;
 
 const calculateUp = (forward: Vector3, right: Vector3, out?: Vector3): Vector3 => {
-  return right.cross(forward, out).normalize();
+  if (out) {
+    return right.crossTo(forward, out).normalize();
+  }
+
+  const up = Vector3.zero();
+  return up.copy(right).cross(forward).normalize();
 };
 
 const calculateRight = (forward: Vector3, up: Vector3, out?: Vector3): Vector3 => {
-  return forward.cross(up, out).normalize();
+  if (out) {
+    return up.crossTo(forward, out).normalize();
+  }
+
+  const right = Vector3.zero();
+  return right.copy(up).cross(forward).normalize();
 };
 
 class CameraStance {
@@ -54,21 +64,21 @@ class CameraStance {
 
   update(input: CameraStanceInput) {
     const {position, target, type} = input;
-    this.position.set(position);
-    this.target.set(target);
+    this.position.copy(position);
+    this.target.copy(target);
 
     const {forward} = this;
-    forward.set(target).subtract(position).normalize();
+    forward.copy(target).subtract(position).normalize();
     if (type === 'right') {
       const {right} = input;
-      this.right.set(right).normalize();
+      this.right.copy(right).normalize();
       calculateUp(forward, right, this.up);
       this.up
       return;
     }
 
     const {up} = input;
-    this.up.set(up).normalize();
+    this.up.copy(up).normalize();
     calculateRight(forward, up, this.right);
   }
 }
