@@ -15,7 +15,7 @@ class GLTransform {
     const matrix = Matrix4.identity();
     const modelUniform = GLUniformMatrix4.create(gl, program, 'model', matrix);
     if (!modelUniform) {
-      console.error('[sorb] GLTransform.create() could not create GLUniformMatrix4');
+      console.error('[quvysm] GLTransform.create() could not create GLUniformMatrix4');
       return null;
     }
 

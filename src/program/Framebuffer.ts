@@ -53,7 +53,7 @@ class Framebuffer {
     const {width, height} = this;
     const glFramebuffer = GLFramebuffer.create(gl, width, height);
     if (!glFramebuffer) {
-      console.warn(`[sorb] Framebuffer.initialize() could not create GLFramebuffer`);
+      console.warn(`[quvysm] Framebuffer.initialize() could not create GLFramebuffer`);
       return;
     }
 

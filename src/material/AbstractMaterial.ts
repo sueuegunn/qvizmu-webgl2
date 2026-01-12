@@ -38,7 +38,7 @@ abstract class AbstractMaterial<T extends UniformMap> extends AbstractGLDisposab
     const uniformMap = this.createUniformMap(gl, program);
     if (!uniformMap) {
       const {name} = this;
-      console.warn(`[sorb] ${name}.prepare() could not create UniformMap`);
+      console.warn(`[quvysm] ${name}.prepare() could not create UniformMap`);
       return;
     }
 

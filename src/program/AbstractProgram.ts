@@ -44,21 +44,21 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     name: string
   ) {
     super();
-    this.clientSize = Vector2.allOnes();
+    this.clientSize = Vector2.one();
 
     this.id = IdGenerator.next();
     this.tag = `${name}.AbstractProgram:${this.id}`;
     
     const glProgram = GLProgram.create(gl, vertexShaderSource, fragmentShaderSource, name);
     if (!glProgram) {
-      console.warn(`[sorb] could not create GLProgram name='${name}'`);
+      console.warn(`[quvysm] could not create GLProgram name='${name}'`);
       return;
     }
 
     const {program} = glProgram;
     const glCamera = this.createCamera(gl, program);
     if (!glCamera) {
-      console.warn(`[sorb] could not create GLCamera name='${name}'`);
+      console.warn(`[quvysm] could not create GLCamera name='${name}'`);
       return;
     }
 
@@ -68,7 +68,7 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
   }
 
   updateClientSize(clientSize: Vector2): void {
-    this.clientSize.set(clientSize);
+    this.clientSize.copy(clientSize);
   }
 
   updateCamera(
@@ -97,8 +97,8 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
   }
 
   private glDefaultSettings(gl: WebGL2RenderingContext): void {
-    gl.disable(gl.DEPTH_TEST);
-    gl.disable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
 
     gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
     gl.enable(gl.BLEND);
