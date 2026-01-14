@@ -2,6 +2,7 @@ import { CameraStance, type CameraStanceInput, type CameraStanceInputRight, type
 import { OrthographicCamera } from "./camera/OrthographicCamera";
 import { PerspectiveCamera } from "./camera/PerspectiveCamera";
 import { AbstractMaterial } from "./material/AbstractMaterial";
+import { EmptyMaterial } from "./material/EmptyMaterial";
 import { SingleColorUnlitMaterial } from "./material/SingleColorUnlitMaterial";
 import { Geometry } from "./object/Geometry";
 import type { Attribute, AttributeType, GeometryFace, TupleOf, VertexOf } from "./object/Geometry";
@@ -26,6 +27,7 @@ export {
   GLCameraEmpty,
   GLCameraSeparate,
   AbstractMaterial,
+  EmptyMaterial,
   SingleColorUnlitMaterial,
   AbstractProgram,
   SingleColorUnlitProgram,
