@@ -179,14 +179,14 @@ class GLTexture extends AbstractGLDisposable implements GLUniform {
   ): GLTexture | null {
     const texture = webGLTexture ?? gl.createTexture();
     if (!texture) {
-      console.warn(`[quvysm] GLTexture.create() could not create WebGLTexture name='${name}'`);
+      console.warn(`[qvizmu] GLTexture.create() could not create WebGLTexture name='${name}'`);
       return null;
     }
 
     const target = numberToTarget(targetNumber);
     const glUniform = GLUniformInt1.create(gl, program, name, targetNumber);
     if (!glUniform) {
-      console.warn(`[quvysm] GLTexture.create() could not create GLUniform name='${name}'`);
+      console.warn(`[qvizmu] GLTexture.create() could not create GLUniform name='${name}'`);
       return null;
     }
     

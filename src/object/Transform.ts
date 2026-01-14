@@ -48,7 +48,7 @@ class Transform implements Clonable<Transform> {
 
     const glTransform = GLTransform.create(gl, program);
     if (!glTransform) {
-      console.error('[quvysm] Transform.prepare() could not create GLTransform');
+      console.error('[qvizmu] Transform.prepare() could not create GLTransform');
       return;
     }
 

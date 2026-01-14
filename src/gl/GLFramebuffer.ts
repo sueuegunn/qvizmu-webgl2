@@ -33,13 +33,13 @@ class GLFramebuffer extends AbstractGLDisposable {
   ): GLFramebuffer | null {
     const framebuffer = gl.createFramebuffer();
     if (!framebuffer) {
-      console.warn(`[quvysm] GLFramebuffer.create() could not create WebGLFramebuffer`);
+      console.warn(`[qvizmu] GLFramebuffer.create() could not create WebGLFramebuffer`);
       return null;
     }
 
     const depthRenderbuffer = gl.createRenderbuffer();
     if (!depthRenderbuffer) {
-      console.warn(`[quvysm] GLFramebuffer.create() could not create WebGLRenderbuffer`);
+      console.warn(`[qvizmu] GLFramebuffer.create() could not create WebGLRenderbuffer`);
       return null;
     }
 
@@ -54,7 +54,7 @@ class GLFramebuffer extends AbstractGLDisposable {
 
     const texture = gl.createTexture();
     if (!texture) {
-      console.warn(`[quvysm] GLFramebuffer.create() could not create WebGLTexture`);
+      console.warn(`[qvizmu] GLFramebuffer.create() could not create WebGLTexture`);
       return null;
     }
 

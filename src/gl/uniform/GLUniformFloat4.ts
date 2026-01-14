@@ -42,7 +42,7 @@ class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
   ): GLUniformFloat4 | null {
     const glUniform = GLUniformLocation.create(gl, program, name);
     if (!glUniform) {
-      console.warn(`[quvysm] could not create GLUniformLocation name='${name}'`);
+      console.warn(`[qvizmu] could not create GLUniformLocation name='${name}'`);
       return null;
     }
 

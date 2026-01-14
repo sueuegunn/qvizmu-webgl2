@@ -9,7 +9,7 @@ const compileShader = (
 ): WebGLShader | null => {
   const shader = gl.createShader(type);
   if (!shader) {
-    console.warn(`[quvysm] could not create WebGLShader name='${name}'`);
+    console.warn(`[qvizmu] could not create WebGLShader name='${name}'`);
     return null;
   }
   gl.shaderSource(shader, source);
@@ -17,7 +17,7 @@ const compileShader = (
 
   const status = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (!status) {
-    console.warn(`[quvysm] shader compile error name='${name}'`);
+    console.warn(`[qvizmu] shader compile error name='${name}'`);
     const info = gl.getShaderInfoLog(shader);
     console.warn(info);
     return null;
@@ -33,7 +33,7 @@ const linkProgram = (
 ): WebGLProgram | null => {
   const program = gl.createProgram();
   if (!program) {
-    console.warn(`[quvysm] could not create WebGLProgram name='${name}'`);
+    console.warn(`[qvizmu] could not create WebGLProgram name='${name}'`);
     return null;
   }
   gl.attachShader(program, vertex);
@@ -42,7 +42,7 @@ const linkProgram = (
 
   const status = gl.getProgramParameter(program, gl.LINK_STATUS);
   if (!status) {
-    console.warn(`[quvysm] program link error name='${name}'`);
+    console.warn(`[qvizmu] program link error name='${name}'`);
     const info = gl.getProgramInfoLog(program);
     console.warn(info);
     return null;

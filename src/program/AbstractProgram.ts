@@ -51,14 +51,14 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     
     const glProgram = GLProgram.create(gl, vertexShaderSource, fragmentShaderSource, name);
     if (!glProgram) {
-      console.warn(`[quvysm] could not create GLProgram name='${name}'`);
+      console.warn(`[qvizmu] could not create GLProgram name='${name}'`);
       return;
     }
 
     const {program} = glProgram;
     const glCamera = this.createCamera(gl, program);
     if (!glCamera) {
-      console.warn(`[quvysm] could not create GLCamera name='${name}'`);
+      console.warn(`[qvizmu] could not create GLCamera name='${name}'`);
       return;
     }
 

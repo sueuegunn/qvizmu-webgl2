@@ -35,7 +35,7 @@ class GLUniformInt1 extends Vector1 implements GLUniform, GLDisposable {
   ): GLUniformInt1 | null {
     const glUniform = GLUniformLocation.create(gl, program, name);
     if (!glUniform) {
-      console.warn(`[quvysm] could not create GLUniformLocation name='${name}'`);
+      console.warn(`[qvizmu] could not create GLUniformLocation name='${name}'`);
       return null;
     }
 

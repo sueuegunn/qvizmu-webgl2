@@ -22,7 +22,7 @@ class SingleColorUnlitMaterial extends AbstractMaterial<UniformMap> {
   ): UniformMap | null {
     const color = GLUniformFloat4.createFromColor(gl, program, 'color', this.color);
     if (!color) {
-      console.warn(`[quvysm] ${NAME}.createUniformMap() could not create GLUniform`);
+      console.warn(`[qvizmu] ${NAME}.createUniformMap() could not create GLUniform`);
       return null;
     }
 
