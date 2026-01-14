@@ -7,7 +7,6 @@ class Transform implements Clonable<Transform> {
   readonly scale: Vector3;
 
   readonly model: Matrix4;
-  private tmpMatrix: Matrix4;
 
   private glTransform: GLTransform | undefined;
 
@@ -17,7 +16,6 @@ class Transform implements Clonable<Transform> {
     this.scale = scale;
 
     this.model = Matrix4.identity();
-    this.tmpMatrix = Matrix4.identity();
   }
 
   clone(): Transform {
