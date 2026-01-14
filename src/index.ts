@@ -1,4 +1,5 @@
 import { CameraStance, type CameraStanceInput, type CameraStanceInputRight, type CameraStanceInputUp } from "./camera/stance/CameraStance";
+import { OrthographicCamera } from "./camera/OrthographicCamera";
 import { PerspectiveCamera } from "./camera/PerspectiveCamera";
 import { AbstractMaterial } from "./material/AbstractMaterial";
 import { SingleColorUnlitMaterial } from "./material/SingleColorUnlitMaterial";
@@ -29,6 +30,7 @@ export {
   AbstractProgram,
   SingleColorUnlitProgram,
   VertexColorUnlitProgram,
+  OrthographicCamera,
   PerspectiveCamera,
   Color,
   Size2,
