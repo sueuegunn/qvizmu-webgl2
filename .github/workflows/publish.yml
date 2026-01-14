@@ -18,8 +18,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run build
-      # - name: Publish to npm
-      #   run: npm publish --provenance --access public
+      - name: Publish to npm
+        run: npm publish --provenance --access public
       - name: Publish to GitHub Packages
         run: |
           npm pkg set name="@${{ github.repository_owner }}/qvizmu-webgl2"
