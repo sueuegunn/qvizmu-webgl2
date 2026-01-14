@@ -1,18 +1,49 @@
 {
   "name": "qvizmu-webgl2",
-  "private": true,
+  "description": "WebGL2 wrapper library",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
-  "main": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "main": "dist/qvizmu-webgl2.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/qvizmu-webgl2.js",
+      "require": "./dist/qvizmu-webgl2.cjs"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sueuegunn/qvizmu-webgl2.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/sueuegunn"
+  },
   "scripts": {
-    "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "docs": "typedoc",
+    "version:major": "npm version major --git-tag-version false",
+    "version:minor": "npm version minor --git-tag-version false",
+    "version:patch": "npm version patch --git-tag-version false"
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
+    "@vitest/coverage-v8": "^4.0.17",
+    "typedoc": "^0.28.16",
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.1.14"
+    "vite": "npm:rolldown-vite@7.1.14",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.0.17"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.1.14"
