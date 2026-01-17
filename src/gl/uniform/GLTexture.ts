@@ -174,7 +174,7 @@ class GLTexture extends AbstractGLDisposable implements GLUniform {
     name: string,
     targetNumber: number,
     source: TexImageSource,
-    webGLTexture: WebGLTexture,
+    webGLTexture?: WebGLTexture,
     textureParameterMap = DEFAULT_TEXTURE_PARAMETER_MAP
   ): GLTexture | null {
     const texture = webGLTexture ?? gl.createTexture();

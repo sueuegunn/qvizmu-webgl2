@@ -1,11 +1,10 @@
-import { Vector4 } from "mathue";
+import { Vector3 } from "mathue";
 import type { GLUniform } from "./GLUniform";
 import { GLUniformLocation } from "./GLUniformLocation";
-import type { Color } from "../../value/Color";
 import type { GLDisposable } from "../GLDisposable";
 import { GLResourceManager } from "../resource/GLResourceManager";
 
-class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
+class GLUniformFloat3 extends Vector3 implements GLUniform, GLDisposable {
 
   // GLDisposable
   private _isDisposed: boolean = false;
@@ -24,10 +23,9 @@ class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
     glUniform: GLUniformLocation,
     x: number,
     y: number,
-    z: number,
-    w: number
+    z: number
   ) {
-    super(x, y, z, w);
+    super(x, y, z);
     this.glUniform = glUniform;
   }
 
@@ -37,16 +35,15 @@ class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
     name: string,
     x: number,
     y: number,
-    z: number,
-    w: number
-  ): GLUniformFloat4 | null {
+    z: number
+  ): GLUniformFloat3 | null {
     const glUniform = GLUniformLocation.create(gl, program, name);
     if (!glUniform) {
       console.warn(`[qvizmu] could not create GLUniformLocation name='${name}'`);
       return null;
     }
 
-    const glUniformFloat4 = new GLUniformFloat4(glUniform, x, y, z, w);
+    const glUniformFloat4 = new GLUniformFloat3(glUniform, x, y, z);
     GLResourceManager.add(gl, glUniformFloat4);
 
     return glUniformFloat4;
@@ -56,42 +53,23 @@ class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
     gl: WebGL2RenderingContext,
     program: WebGLProgram,
     name: string,
-    vector: Vector4
-  ): GLUniformFloat4 | null {
-    const {x, y, z, w} = vector;
-    return GLUniformFloat4.create(gl, program, name, x, y, z, w);
+    vector: Vector3
+  ): GLUniformFloat3 | null {
+    const {x, y, z} = vector;
+    return GLUniformFloat3.create(gl, program, name, x, y, z);
   }
 
-  static createFromColor(
-    gl: WebGL2RenderingContext,
-    program: WebGLProgram,
-    name: string,
-    color: Color
-  ): GLUniformFloat4 | null {
-    const {r, g, b, a} = color;
-    return GLUniformFloat4.create(gl, program, name, r, g, b, a);
-  }
-
-  copyVector(vector: Vector4): void {
-    const {x, y, z, w} = vector;
+  copyVector(vector: Vector3): void {
+    const {x, y, z} = vector;
     this.x = x;
     this.y = y;
     this.z = z;
-    this.w = w;
-  }
-
-  copyColor(color: Color): void {
-    const {r, g, b, a} = color;
-    this.x = r;
-    this.y = g;
-    this.z = b;
-    this.w = a;
   }
 
   uniform(gl: WebGL2RenderingContext): void {
-    const {glUniform, x, y, z, w} = this;
+    const {glUniform, x, y, z} = this;
     const {location} = glUniform;
-    gl.uniform4f(location, x, y, z, w);
+    gl.uniform3f(location, x, y, z);
   }
 
   dispose(_gl: WebGL2RenderingContext): void {
@@ -100,4 +78,4 @@ class GLUniformFloat4 extends Vector4 implements GLUniform, GLDisposable {
   }
 }
 
-export {GLUniformFloat4};
+export {GLUniformFloat3};

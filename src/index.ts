@@ -18,6 +18,12 @@ import { GLCameraEmpty } from "./gl/camera/GLCameraEmpty";
 import { GLCameraSeparate } from "./gl/camera/GLCameraSeparate";
 import { VertexColorUnlitProgram } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
 import type { VertexColorUnlitAttributes, VertexColorUnlitVertex } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
+import { GLTexture } from "./gl/uniform/GLTexture";
+import { GLUniformFloat1 } from "./gl/uniform/GLUniformFloat1";
+import { GLUniformFloat2 } from "./gl/uniform/GLUniformFloat2";
+import { GLUniformFloat3 } from "./gl/uniform/GLUniformFloat3";
+import { GLUniformFloat4 } from "./gl/uniform/GLUniformFloat4";
+import { GLUniformInt1 } from "./gl/uniform/GLUniformInt1";
 
 export {
   Object3D,
@@ -26,11 +32,19 @@ export {
   CameraStance,
   GLCameraEmpty,
   GLCameraSeparate,
+  GLTexture,
+  GLUniformInt1,
+  GLUniformFloat1,
+  GLUniformFloat2,
+  GLUniformFloat3,
+  GLUniformFloat4,
   AbstractMaterial,
   EmptyMaterial,
   SingleColorUnlitMaterial,
+  TextureUnlitMaterial,
   AbstractProgram,
   SingleColorUnlitProgram,
+  TextureUnlitProgram,
   VertexColorUnlitProgram,
   OrthographicCamera,
   PerspectiveCamera,
