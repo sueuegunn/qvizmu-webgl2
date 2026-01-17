@@ -18,6 +18,8 @@ import { GLCameraEmpty } from "./gl/camera/GLCameraEmpty";
 import { GLCameraSeparate } from "./gl/camera/GLCameraSeparate";
 import { VertexColorUnlitProgram } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
 import type { VertexColorUnlitAttributes, VertexColorUnlitVertex } from "./program/vertexColorUnlit/VertexColorUnlitProgram";
+import { TextureUnlitMaterial } from "./material/TextureUnlitMaterial";
+import { TextureUnlitProgram, type TextureUnlitAttributes, type TextureUnlitVertex } from "./program/textureUnlit/TextureUnlitProgram";
 import { GLTexture } from "./gl/uniform/GLTexture";
 import { GLUniformFloat1 } from "./gl/uniform/GLUniformFloat1";
 import { GLUniformFloat2 } from "./gl/uniform/GLUniformFloat2";
@@ -62,6 +64,8 @@ export type {
   VertexOf,
   SingleColorUnlitAttributes,
   SingleColorUnlitVertex,
+  TextureUnlitAttributes,
+  TextureUnlitVertex,
   VertexColorUnlitAttributes,
   VertexColorUnlitVertex,
   GeometryFace,

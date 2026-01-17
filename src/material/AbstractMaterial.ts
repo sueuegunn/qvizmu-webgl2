@@ -11,7 +11,7 @@ interface Material extends GLDisposable {
 }
 
 abstract class AbstractMaterial<T extends UniformMap> extends AbstractGLDisposable implements Material {
-  private uniformMap?: T;
+  protected uniformMap?: T;
   readonly name: string;
 
   constructor(name: string) {
