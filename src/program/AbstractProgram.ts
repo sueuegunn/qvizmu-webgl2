@@ -126,6 +126,7 @@ abstract class AbstractProgram<Mat extends Material, Attrs extends AttributeType
     this.glDefaultSettings(gl);
     this.glSettings(gl);
 
+    gl.useProgram(program);
     for (const object3D of objects) {
       if (object3D.isDisposed) {
         continue;
